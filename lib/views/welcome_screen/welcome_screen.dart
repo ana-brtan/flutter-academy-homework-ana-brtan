@@ -4,6 +4,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:tv_shows/gen/assets.gen.dart';
+import 'package:tv_shows/views/show%20screen/show_screen.dart';
 
 class WelcomeScreen extends StatefulWidget {
   final String email;
@@ -14,6 +15,14 @@ class WelcomeScreen extends StatefulWidget {
 }
 
 class _WelcomeScreenState extends State<WelcomeScreen> {
+  @override
+  void initState() {
+    Future.delayed(Duration(seconds: 1), () {
+      Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => ShowsScreen()));
+    });
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
