@@ -30,6 +30,34 @@ class $AssetsImagesGen {
   /// File path: assets/images/Welcome-icon.svg
   SvgGenImage get welcomeIcon =>
       const SvgGenImage('assets/images/Welcome-icon.svg');
+
+  /// File path: assets/images/empty_state.png
+  AssetGenImage get emptyState =>
+      const AssetGenImage('assets/images/empty_state.png');
+
+  /// File path: assets/images/krv_nije_voda.png
+  AssetGenImage get krvNijeVoda =>
+      const AssetGenImage('assets/images/krv_nije_voda.png');
+
+  /// File path: assets/images/profile_placeholder.png
+  AssetGenImage get profilePlaceholder =>
+      const AssetGenImage('assets/images/profile_placeholder.png');
+
+  /// File path: assets/images/stranger_things.png
+  AssetGenImage get strangerThings =>
+      const AssetGenImage('assets/images/stranger_things.png');
+
+  /// File path: assets/images/the_office.png
+  AssetGenImage get theOffice =>
+      const AssetGenImage('assets/images/the_office.png');
+
+  /// File path: assets/images/the_office_2x.png
+  AssetGenImage get theOffice2x =>
+      const AssetGenImage('assets/images/the_office_2x.png');
+
+  /// File path: assets/images/the_office_3x.png
+  AssetGenImage get theOffice3x =>
+      const AssetGenImage('assets/images/the_office_3x.png');
 }
 
 class Assets {
