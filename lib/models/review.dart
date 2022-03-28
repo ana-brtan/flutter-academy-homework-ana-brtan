@@ -1,17 +1,17 @@
-import '../gen/assets.gen.dart';
+import 'package:json_annotation/json_annotation.dart';
+import 'package:tv_shows/models/user.dart';
 
+part 'review.g.dart';
+
+@JsonSerializable(fieldRename: FieldRename.snake)
 class Review {
-  final String comment;
-  final int rating;
-  final String userEmail;
-  final String imageUrl;
+  String id;
+  String comment;
+  int rating;
+  int showId;
+  User user;
 
-  Review({required this.comment, required this.rating, required this.userEmail, required this.imageUrl});
+  Review(this.id, this.comment, this.rating, this.user, this.showId);
 
-  static final List<Review> allReviews = [
-    Review(comment: 'nice', rating: 2, userEmail: 'x@gmail.com', imageUrl: Assets.images.profilePlaceholder.path),
-    Review(comment: 'mehh', rating: 3, userEmail: 'y@gmail.com', imageUrl: Assets.images.profilePlaceholder.path),
-    Review(comment: 'bad', rating: 2, userEmail: 'z@gmail.com', imageUrl: Assets.images.profilePlaceholder.path),
-    Review(comment: 'bad', rating: 2, userEmail: 'z@gmail.com', imageUrl: Assets.images.profilePlaceholder.path)
-  ];
+  factory Review.fromJson(Map<String, dynamic> json) => _$ReviewFromJson(json);
 }

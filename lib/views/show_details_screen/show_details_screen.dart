@@ -2,8 +2,12 @@ import 'dart:math';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:tv_shows/models/show.dart';
 import 'package:tv_shows/views/show_details_screen/components/reviews.dart';
+
+import '../../models/review_provider.dart';
+import '../../net/network_repository.dart';
 
 class ShowDetailsScreen extends StatefulWidget {
   Show show;
@@ -37,6 +41,12 @@ class _ShowDetailsScreenState extends State<ShowDetailsScreen> {
     _scrollController.addListener(() {
       _titlePaddingNotifier.value = _horizontalTitlePadding;
     });
+
+    var reviewProvider = ReviewProvider();
+
+    var api = Provider.of<NetworkRepository>(context);
+
+    api.fetchShowReviews(widget.show.id).then((reviews) => reviewProvider.addMany(reviews));
 
     return Scaffold(
         bottomSheet: Container(
@@ -89,7 +99,7 @@ class _ShowDetailsScreenState extends State<ShowDetailsScreen> {
                         return Padding(
                           padding: EdgeInsets.symmetric(horizontal: value as double),
                           child: Text(
-                            widget.show.name,
+                            widget.show.title,
                             style: TextStyle(color: Colors.black, fontSize: 24, fontWeight: FontWeight.bold),
                           ),
                         );
@@ -105,13 +115,13 @@ class _ShowDetailsScreenState extends State<ShowDetailsScreen> {
                   children: [
                     Padding(
                       padding: const EdgeInsets.symmetric(vertical: 30),
-                      child: (widget.show.imageUrl.isNotEmpty ? Image.asset(widget.show.imageUrl) : null),
+                      child: (widget.show.imageUrl != null ? Image.network(widget.show.imageUrl!) : null),
                     ),
                     Text(
                       widget.show.description,
                       style: TextStyle(color: Colors.black, fontSize: 17),
                     ),
-                    Reviews(show: widget.show)
+                    ChangeNotifierProvider(create: (context) => reviewProvider, child: Reviews(show: widget.show))
                   ],
                 ),
               )),

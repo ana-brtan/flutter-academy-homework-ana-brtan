@@ -29,18 +29,13 @@ class ShowsList extends StatelessWidget {
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            (data.shows[index].imageUrl.length > 0)
-                                ? Image.asset(
-                                    data.shows[index].imageUrl,
-                                    height: 193,
-                                    width: 344,
-                                    fit: BoxFit.cover,
-                                  )
+                            (data.shows[index].imageUrl != null)
+                                ? Image.network(data.shows[index].imageUrl!, height: 193, width: 344, fit: BoxFit.cover)
                                 : Container(height: 193, width: 344),
                             Padding(
                               padding: const EdgeInsets.all(16),
                               child: Text(
-                                data.shows[index].name,
+                                data.shows[index].title,
                                 style: TextStyle(fontFamily: 'Roboto', fontSize: 20, fontWeight: FontWeight.bold),
                               ),
                             ),

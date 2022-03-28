@@ -2,8 +2,8 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:tv_shows/gen/assets.gen.dart';
+import 'package:tv_shows/net/network_repository.dart';
 
-import '../../models/show.dart';
 import '../../models/shows_provider.dart';
 import 'components/shows_list.dart';
 
@@ -16,11 +16,15 @@ class ShowsScreen extends StatefulWidget {
 
 class _ShowsScreenState extends State<ShowsScreen> {
   bool listVisible = true;
+  NetworkRepository api = NetworkRepository();
 
   @override
   Widget build(BuildContext context) {
     var showsProvider = ShowsProvider();
-    showsProvider.addMany(Show.allShows);
+    // showsProvider.addMany(Show.allShows);
+
+    var api = Provider.of<NetworkRepository>(context, listen: false);
+    api.fetchShows().then((shows) => showsProvider.addMany(shows));
 
     _header() {
       return Padding(

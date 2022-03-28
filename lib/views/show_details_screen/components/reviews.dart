@@ -4,7 +4,6 @@ import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:provider/provider.dart';
 import 'package:tv_shows/models/show.dart';
 
-import '../../../models/review.dart';
 import '../../../models/review_provider.dart';
 
 class Reviews extends StatelessWidget {
@@ -14,60 +13,59 @@ class Reviews extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    var reviewProvider = ReviewProvider();
-    reviewProvider.addMany(Review.allReviews);
-
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Padding(
-          padding: EdgeInsets.only(top: 25),
-          child: Text(
-            "Reviews",
-            style: TextStyle(fontWeight: FontWeight.bold, fontSize: 24),
-          ),
-        ),
-        Visibility(
-          visible: reviewProvider.reviews.length > 0,
-          replacement: Padding(
-            padding: EdgeInsets.symmetric(vertical: 40),
-            child: Row(
-              children: [Text("No reviews yet.", style: TextStyle(fontSize: 17))],
-              crossAxisAlignment: CrossAxisAlignment.center,
-              mainAxisAlignment: MainAxisAlignment.center,
+    return Consumer<ReviewProvider>(builder: (context, data, index) {
+      return Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Padding(
+            padding: EdgeInsets.only(top: 25),
+            child: Text(
+              "Reviews",
+              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 24),
             ),
           ),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Padding(
-                  padding: EdgeInsets.only(top: 16),
-                  child: Text(
-                    "${show.numOfReviews} REVIEWS, ${show.averageRating} AVERAGE",
-                    style: TextStyle(color: Color(0xff999999), fontSize: 14),
-                  )),
-              Padding(
-                padding: EdgeInsets.only(top: 6),
-                child: RatingBar(
-                  initialRating: show.averageRating,
-                  itemCount: 5,
-                  allowHalfRating: true,
-                  ratingWidget: RatingWidget(
-                      full: Icon(
-                        Icons.star,
-                        color: Color(0xff52368C),
-                      ),
-                      half: Icon(Icons.star_half, color: Color(0xff52368C)),
-                      empty: Icon(Icons.star_outline, color: Color(0xff52368C))),
-                  onRatingUpdate: (double value) {},
-                ),
+          Visibility(
+            visible: data.reviews.length > 0,
+            replacement: Padding(
+              padding: EdgeInsets.symmetric(vertical: 40),
+              child: Row(
+                children: [Text("No reviews yet.", style: TextStyle(fontSize: 17))],
+                crossAxisAlignment: CrossAxisAlignment.center,
+                mainAxisAlignment: MainAxisAlignment.center,
               ),
-              ChangeNotifierProvider(create: (context) => reviewProvider, child: _reviewList())
-            ],
-          ),
-        )
-      ],
-    );
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Padding(
+                    padding: EdgeInsets.only(top: 16),
+                    child: Text(
+                      "${show.numOfReviews} REVIEWS, ${show.averageRating} AVERAGE",
+                      style: TextStyle(color: Color(0xff999999), fontSize: 14),
+                    )),
+                Padding(
+                  padding: EdgeInsets.only(top: 6),
+                  child: RatingBar(
+                    initialRating: show.averageRating,
+                    itemCount: 5,
+                    allowHalfRating: true,
+                    ratingWidget: RatingWidget(
+                        full: Icon(
+                          Icons.star,
+                          color: Color(0xff52368C),
+                        ),
+                        half: Icon(Icons.star_half, color: Color(0xff52368C)),
+                        empty: Icon(Icons.star_outline, color: Color(0xff52368C))),
+                    onRatingUpdate: (double value) {},
+                  ),
+                ),
+                _reviewList()
+              ],
+            ),
+          )
+        ],
+      );
+    });
   }
 
   _reviewList() {
@@ -96,9 +94,15 @@ class Reviews extends StatelessWidget {
                               children: [
                                 Row(
                                   children: [
-                                    Image.asset(review.imageUrl),
+                                    review.user.imageUrl != null
+                                        ? Image.network(
+                                            review.user.imageUrl!,
+                                            height: 75,
+                                            width: 75,
+                                          )
+                                        : Container(height: 75, width: 75),
                                     SizedBox(width: 18),
-                                    Text(review.userEmail,
+                                    Text(review.user.email,
                                         style: TextStyle(
                                             color: Color(0xff52368C), fontWeight: FontWeight.bold, fontSize: 15))
                                   ],

@@ -4,7 +4,7 @@ import 'package:tv_shows/models/review.dart';
 class ReviewProvider extends ChangeNotifier {
   List<Review> _reviews = [];
 
-  List<Review> get reviews => Review.allReviews;
+  List<Review> get reviews => _reviews;
 
   void addMany(List<Review> items) {
     _reviews = items;

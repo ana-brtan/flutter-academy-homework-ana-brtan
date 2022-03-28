@@ -4,16 +4,27 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:tv_shows/views/welcome_screen/welcome_screen.dart';
 
 class LoginForm extends StatefulWidget {
   String? title;
   String? description;
+  String showOtherButtonTitle;
+  Function(String, String) buttonPressed;
+  VoidCallback showOtherButtonPressed;
+  String buttonTitle;
 
   @override
   State<StatefulWidget> createState() => _LoginFormState();
 
-  LoginForm({Key? key, this.title, this.description}) : super(key: key) {}
+  LoginForm(
+      {Key? key,
+      this.title,
+      this.description,
+      required this.showOtherButtonPressed,
+      required this.buttonPressed,
+      required this.showOtherButtonTitle,
+      required this.buttonTitle})
+      : super(key: key) {}
 }
 
 class _LoginFormState extends State<LoginForm> {
@@ -78,7 +89,7 @@ class _LoginFormState extends State<LoginForm> {
           ),
         ),
         Container(
-          margin: const EdgeInsets.only(top: 25, bottom: 90),
+          margin: const EdgeInsets.only(top: 25, bottom: 0),
           child: TextField(
             onChanged: setPassword,
             style: TextStyle(color: Colors.white, fontSize: 16),
@@ -97,20 +108,28 @@ class _LoginFormState extends State<LoginForm> {
                 labelStyle: TextStyle(color: Colors.white)),
           ),
         ),
-        MaterialButton(
-            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(22.5)),
-            height: 45,
-            minWidth: double.infinity,
-            color: Colors.white,
-            disabledColor: const Color(0xffbbbbbbb).withOpacity(0.5),
-            child: Text(
-              "Login",
-              style:
-                  TextStyle(fontFamily: 'Roboto', fontSize: 17, color: isFormValid ? Color(0xff3d1d72) : Colors.white),
-            ),
-            onPressed: isFormValid
-                ? () => Navigator.of(context).push(MaterialPageRoute(builder: (context) => WelcomeScreen(email: email)))
-                : null),
+        Center(
+          child: TextButton(
+              onPressed: widget.showOtherButtonPressed,
+              child: Text(widget.showOtherButtonTitle,
+                  style: TextStyle(
+                      fontFamily: 'Roboto', fontSize: 17, color: Colors.white, decoration: TextDecoration.underline))),
+        ),
+        Container(
+          margin: const EdgeInsets.only(top: 60),
+          child: MaterialButton(
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(22.5)),
+              height: 45,
+              minWidth: double.infinity,
+              color: Colors.white,
+              disabledColor: const Color(0xffbbbbbbb).withOpacity(0.5),
+              child: Text(
+                widget.buttonTitle,
+                style: TextStyle(
+                    fontFamily: 'Roboto', fontSize: 17, color: isFormValid ? Color(0xff3d1d72) : Colors.white),
+              ),
+              onPressed: isFormValid ? () => widget.buttonPressed(email, password) : null),
+        ),
       ]),
     );
   }
