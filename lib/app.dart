@@ -11,7 +11,10 @@ class TVShowsApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MultiProvider(
-      providers: [Provider(create: (context) => AuthInfoHolder()), Provider(create: (context) => NetworkRepository())],
+      providers: [
+        Provider(create: (context) => AuthInfoHolder()),
+        Provider(create: (context) => NetworkRepository()),
+      ],
       child: MaterialApp(
         home: BaseLoginScreen(isLoginMode: true),
       ),

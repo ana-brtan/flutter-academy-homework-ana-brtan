@@ -11,6 +11,11 @@ class ReviewProvider extends ChangeNotifier {
     notifyListeners();
   }
 
+  void addSingle(Review item) {
+    _reviews.add(item);
+    notifyListeners();
+  }
+
   void clear() {
     _reviews.clear();
     notifyListeners();
