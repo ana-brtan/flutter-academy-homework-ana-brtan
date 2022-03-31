@@ -12,10 +12,10 @@ import '../models/show.dart';
 import '../models/user.dart';
 
 class NetworkRepository {
-  NetworkRepository() {
+  NetworkRepository(AuthInfoHolder holder) {
     final options = BaseOptions(baseUrl: 'https://tv-shows.infinum.academy');
     _dio = Dio(options);
-    _dio.interceptors.add(AuthInfoInterceptor(authInfoHolder: AuthInfoHolder()));
+    _dio.interceptors.add(AuthInfoInterceptor(authInfoHolder: holder));
     _dio.interceptors.add(ErrorExtractorInterceptor());
 
     // this.fetchShows().then((value) => {

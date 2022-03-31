@@ -12,19 +12,21 @@ class LoginForm extends StatefulWidget {
   Function(String, String) buttonPressed;
   VoidCallback showOtherButtonPressed;
   String buttonTitle;
+  final bool isLoading;
 
   @override
   State<StatefulWidget> createState() => _LoginFormState();
 
-  LoginForm(
-      {Key? key,
-      this.title,
-      this.description,
-      required this.showOtherButtonPressed,
-      required this.buttonPressed,
-      required this.showOtherButtonTitle,
-      required this.buttonTitle})
-      : super(key: key) {}
+  LoginForm({
+    Key? key,
+    this.title,
+    this.description,
+    required this.showOtherButtonPressed,
+    required this.buttonPressed,
+    required this.showOtherButtonTitle,
+    required this.buttonTitle,
+    required this.isLoading,
+  }) : super(key: key) {}
 }
 
 class _LoginFormState extends State<LoginForm> {
@@ -119,18 +121,22 @@ class _LoginFormState extends State<LoginForm> {
         ),
         Container(
           margin: const EdgeInsets.only(top: 60),
-          child: MaterialButton(
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(22.5)),
-              height: 45,
-              minWidth: double.infinity,
-              color: Colors.white,
-              disabledColor: const Color(0xffbbbbbbb).withOpacity(0.5),
-              child: Text(
-                widget.buttonTitle,
-                style: TextStyle(
-                    fontFamily: 'Roboto', fontSize: 17, color: isFormValid ? const Color(0xff3d1d72) : Colors.white),
-              ),
-              onPressed: isFormValid ? () => widget.buttonPressed(email, password) : null),
+          child: widget.isLoading
+              ? Center(child: CircularProgressIndicator())
+              : MaterialButton(
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(22.5)),
+                  height: 45,
+                  minWidth: double.infinity,
+                  color: Colors.white,
+                  disabledColor: const Color(0xffbbbbbbb).withOpacity(0.5),
+                  child: Text(
+                    widget.buttonTitle,
+                    style: TextStyle(
+                        fontFamily: 'Roboto',
+                        fontSize: 17,
+                        color: isFormValid ? const Color(0xff3d1d72) : Colors.white),
+                  ),
+                  onPressed: isFormValid ? () => widget.buttonPressed(email, password) : null),
         ),
       ]),
     );
