@@ -1,18 +1,17 @@
-import 'package:flutter/cupertino.dart';
 import 'package:tv_shows/models/review.dart';
 
-class ReviewProvider extends ChangeNotifier {
-  List<Review> _reviews = [];
+import '../common/request_provider.dart';
+import '../net/network_repository.dart';
 
-  List<Review> get reviews => Review.allReviews;
+class ReviewProvider extends RequestProvider<List<Review>> {
+  final NetworkRepository _networkRepository;
+  String showID;
 
-  void addMany(List<Review> items) {
-    _reviews = items;
-    notifyListeners();
+  ReviewProvider(this._networkRepository, this.showID) {
+    fetchReviews();
   }
 
-  void clear() {
-    _reviews.clear();
-    notifyListeners();
+  void fetchReviews() {
+    executeRequest(requestBuilder: () => _networkRepository.fetchShowReviews(showID));
   }
 }

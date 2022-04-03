@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:provider/provider.dart';
 import 'package:tv_shows/models/show.dart';
@@ -14,9 +15,16 @@ class Reviews extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    var reviewProvider = ReviewProvider();
-    reviewProvider.addMany(Review.allReviews);
+    return Consumer<ReviewProvider>(builder: (context, provider, _) {
+      return provider.state.maybeWhen(
+          success: (reviews) => _buildSuccess(reviews),
+          loading: () => CircularProgressIndicator(),
+          failure: (e) => Center(child: Text('An error occured')),
+          orElse: () => Center(child: CircularProgressIndicator()));
+    });
+  }
 
+  _buildSuccess(List<Review> reviews) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -28,7 +36,7 @@ class Reviews extends StatelessWidget {
           ),
         ),
         Visibility(
-          visible: reviewProvider.reviews.length > 0,
+          visible: reviews.length > 0,
           replacement: Padding(
             padding: EdgeInsets.symmetric(vertical: 40),
             child: Row(
@@ -62,69 +70,78 @@ class Reviews extends StatelessWidget {
                   onRatingUpdate: (double value) {},
                 ),
               ),
-              ChangeNotifierProvider(create: (context) => reviewProvider, child: _reviewList())
+              Column(
+                children: [
+                  ...reviews.asMap().entries.map(
+                    (element) {
+                      var index = element.key;
+                      var review = element.value;
+
+                      return Container(
+                        decoration: index > 0
+                            ? BoxDecoration(
+                                border: Border(
+                                top: BorderSide(width: 0.5, color: Color(0xffC8C7CC)),
+                              ))
+                            : null,
+                        child: Padding(
+                          padding: EdgeInsets.symmetric(vertical: 18),
+                          child: Column(
+                            children: [
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                mainAxisSize: MainAxisSize.max,
+                                children: [
+                                  Flexible(
+                                    child: Row(
+                                      children: [
+                                        review.user.imageUrl != null
+                                            ? Image.network(
+                                                review.user.imageUrl!,
+                                                height: 75,
+                                                width: 75,
+                                              )
+                                            : Container(height: 75, width: 75),
+                                        SizedBox(width: 18),
+                                        Text(review.user.email,
+                                            style: TextStyle(
+                                                color: Color(0xff52368C), fontWeight: FontWeight.bold, fontSize: 13),
+                                            overflow: TextOverflow.ellipsis)
+                                      ],
+                                    ),
+                                  ),
+                                  Row(
+                                    children: [
+                                      Text(review.rating.toString(),
+                                          style: TextStyle(
+                                              color: Color(0xff52368C), fontWeight: FontWeight.bold, fontSize: 15)),
+                                      review.rating != null
+                                          ? Icon(
+                                              Icons.star,
+                                              color: Color(0xff52368C),
+                                            )
+                                          : Container(
+                                              width: 100,
+                                              height: 100,
+                                            )
+                                    ],
+                                  )
+                                ],
+                              ),
+                              SizedBox(height: 18),
+                              Row(children: [Text(review.comment, style: TextStyle(fontSize: 15))])
+                            ],
+                          ),
+                        ),
+                      );
+                    },
+                  ).toList()
+                ],
+              )
             ],
           ),
         )
       ],
     );
-  }
-
-  _reviewList() {
-    return Consumer<ReviewProvider>(
-        builder: (context, data, index) => Column(
-              children: [
-                ...data.reviews.asMap().entries.map(
-                  (element) {
-                    var index = element.key;
-                    var review = element.value;
-
-                    return Container(
-                      decoration: index > 0
-                          ? BoxDecoration(
-                              border: Border(
-                              top: BorderSide(width: 0.5, color: Color(0xffC8C7CC)),
-                            ))
-                          : null,
-                      child: Padding(
-                        padding: EdgeInsets.symmetric(vertical: 18),
-                        child: Column(
-                          children: [
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              mainAxisSize: MainAxisSize.max,
-                              children: [
-                                Row(
-                                  children: [
-                                    Image.asset(review.imageUrl),
-                                    SizedBox(width: 18),
-                                    Text(review.userEmail,
-                                        style: TextStyle(
-                                            color: Color(0xff52368C), fontWeight: FontWeight.bold, fontSize: 15))
-                                  ],
-                                ),
-                                Row(
-                                  children: [
-                                    Text(review.rating.toString(),
-                                        style: TextStyle(
-                                            color: Color(0xff52368C), fontWeight: FontWeight.bold, fontSize: 15)),
-                                    Icon(
-                                      Icons.star,
-                                      color: Color(0xff52368C),
-                                    )
-                                  ],
-                                )
-                              ],
-                            ),
-                            SizedBox(height: 18),
-                            Row(children: [Text(review.comment, style: TextStyle(fontSize: 15))])
-                          ],
-                        ),
-                      ),
-                    );
-                  },
-                ).toList()
-              ],
-            ));
   }
 }
