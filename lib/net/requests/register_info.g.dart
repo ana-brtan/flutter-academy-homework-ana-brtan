@@ -12,7 +12,8 @@ RegisterInfo _$RegisterInfoFromJson(Map<String, dynamic> json) => RegisterInfo(
       json['password_confirmation'] as String,
     );
 
-Map<String, dynamic> _$RegisterInfoToJson(RegisterInfo instance) => <String, dynamic>{
+Map<String, dynamic> _$RegisterInfoToJson(RegisterInfo instance) =>
+    <String, dynamic>{
       'email': instance.email,
       'password': instance.password,
       'password_confirmation': instance.passwordConfirmation,

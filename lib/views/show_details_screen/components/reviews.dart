@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:provider/provider.dart';
 import 'package:tv_shows/models/show.dart';
@@ -92,30 +93,38 @@ class Reviews extends StatelessWidget {
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               mainAxisSize: MainAxisSize.max,
                               children: [
-                                Row(
-                                  children: [
-                                    review.user.imageUrl != null
-                                        ? Image.network(
-                                            review.user.imageUrl!,
-                                            height: 75,
-                                            width: 75,
-                                          )
-                                        : Container(height: 75, width: 75),
-                                    SizedBox(width: 18),
-                                    Text(review.user.email,
-                                        style: TextStyle(
-                                            color: Color(0xff52368C), fontWeight: FontWeight.bold, fontSize: 15))
-                                  ],
+                                Flexible(
+                                  child: Row(
+                                    children: [
+                                      review.user.imageUrl != null
+                                          ? Image.network(
+                                              review.user.imageUrl!,
+                                              height: 75,
+                                              width: 75,
+                                            )
+                                          : Container(height: 75, width: 75),
+                                      SizedBox(width: 18),
+                                      Text(review.user.email,
+                                          style: TextStyle(
+                                              color: Color(0xff52368C), fontWeight: FontWeight.bold, fontSize: 13),
+                                          overflow: TextOverflow.ellipsis)
+                                    ],
+                                  ),
                                 ),
                                 Row(
                                   children: [
                                     Text(review.rating.toString(),
                                         style: TextStyle(
                                             color: Color(0xff52368C), fontWeight: FontWeight.bold, fontSize: 15)),
-                                    Icon(
-                                      Icons.star,
-                                      color: Color(0xff52368C),
-                                    )
+                                    review.rating != null
+                                        ? Icon(
+                                            Icons.star,
+                                            color: Color(0xff52368C),
+                                          )
+                                        : Container(
+                                            width: 100,
+                                            height: 100,
+                                          )
                                   ],
                                 )
                               ],

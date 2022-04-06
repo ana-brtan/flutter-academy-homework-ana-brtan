@@ -4,6 +4,7 @@ import 'package:tv_shows/net/auth_info.dart';
 import 'package:tv_shows/net/auth_info_holder.dart';
 import 'package:tv_shows/net/auth_info_interceptor.dart';
 import 'package:tv_shows/net/error_extractor_interceptor.dart';
+import 'package:tv_shows/net/requests/add_review.dart';
 import 'package:tv_shows/net/requests/register_info.dart';
 import 'package:tv_shows/net/requests/sign_in_info.dart';
 
@@ -11,10 +12,10 @@ import '../models/show.dart';
 import '../models/user.dart';
 
 class NetworkRepository {
-  NetworkRepository() {
+  NetworkRepository(AuthInfoHolder holder) {
     final options = BaseOptions(baseUrl: 'https://tv-shows.infinum.academy');
     _dio = Dio(options);
-    _dio.interceptors.add(AuthInfoInterceptor(authInfoHolder: AuthInfoHolder()));
+    _dio.interceptors.add(AuthInfoInterceptor(authInfoHolder: holder));
     _dio.interceptors.add(ErrorExtractorInterceptor());
 
     // this.fetchShows().then((value) => {
@@ -56,7 +57,13 @@ class NetworkRepository {
 
   Future<List<Review>> fetchShowReviews(String showID) async {
     final response = await _dio.get("/shows/$showID/reviews");
-    var l = response.data['reviews'] as Iterable;
-    return List<Review>.from(l.map((model) => Review.fromJson(model)));
+    var rawReviews = response.data['reviews'] as Iterable;
+    return List<Review>.from(rawReviews.map((elem) => Review.fromJson(elem)));
+  }
+
+  Future<Review> addShowReview(AddReview body) async {
+    final response = await _dio.post("/reviews", data: body.toJson());
+    var rawReview = response.data['review'];
+    return Review.fromJson(rawReview);
   }
 }
