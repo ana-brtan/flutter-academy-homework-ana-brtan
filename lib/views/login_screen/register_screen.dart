@@ -1,30 +1,29 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:tv_shows/net/requests/sign_in_info.dart';
-import 'package:tv_shows/providers/login_provider.dart';
+import 'package:tv_shows/net/requests/register_info.dart';
 import 'package:tv_shows/views/login_screen/base_login_screen.dart';
-import 'package:tv_shows/views/login_screen/register_screen.dart';
+import 'package:tv_shows/views/login_screen/login_screen.dart';
 
 import '../../common/consumer_listener.dart';
+import '../../providers/register_provider.dart';
 import '../welcome_screen/welcome_screen.dart';
 
-class LoginScreen extends StatelessWidget {
-  const LoginScreen({Key? key}) : super(key: key);
+class RegisterScreen extends StatelessWidget {
+  const RegisterScreen({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return ChangeNotifierProvider(
-      create: (context) => LoginProvider(context.read()),
+      create: (context) => RegisterProvider(context.read()),
       child: _Screen(),
     );
   }
 }
 
 class _Screen extends StatelessWidget {
-  final String title = 'Login';
-  final String description = 'In order to continue please log in.';
-  final String showOtherButtonTitle = 'Create account';
+  final String title = 'Register';
+  final String description = 'In order to continue please register.';
+  final String showOtherButtonTitle = 'Login';
 
   const _Screen({
     Key? key,
@@ -33,10 +32,11 @@ class _Screen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     _changeAuthScreen() {
-      Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => const RegisterScreen()));
+      print('register, change auth');
+      Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => const LoginScreen()));
     }
 
-    return ConsumerListener<LoginProvider>(
+    return ConsumerListener<RegisterProvider>(
       listener: (context, provider) {
         provider.state.whenOrNull(
           success: (user) => Navigator.pushReplacement(
@@ -52,25 +52,25 @@ class _Screen extends StatelessWidget {
       builder: (context, provider) {
         return provider.state.maybeWhen(
           orElse: () => BaseLoginScreen(
-            isLoginMode: true,
+            title: title,
+            description: description,
+            showOtherButtonPressed: _changeAuthScreen,
+            isLoginMode: false,
             isLoading: false,
             buttonPressed: (email, password) {
-              provider.login(SignInInfo(email, password));
+              provider.registerUser(RegisterInfo(email, password, password));
             },
-            showOtherButtonPressed: _changeAuthScreen,
-            description: description,
-            title: title,
             showOtherButtonTitle: showOtherButtonTitle,
           ),
           loading: () => BaseLoginScreen(
-            isLoading: true,
-            isLoginMode: true,
-            buttonPressed: (email, password) {
-              provider.login(SignInInfo(email, password));
-            },
-            showOtherButtonPressed: _changeAuthScreen,
-            description: description,
             title: title,
+            description: description,
+            showOtherButtonPressed: _changeAuthScreen,
+            isLoginMode: false,
+            isLoading: true,
+            buttonPressed: (email, password) {
+              provider.registerUser(RegisterInfo(email, password, password));
+            },
             showOtherButtonTitle: showOtherButtonTitle,
           ),
         );
