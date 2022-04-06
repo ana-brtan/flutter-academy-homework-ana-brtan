@@ -1,8 +1,11 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'package:provider/provider.dart';
 import 'package:tv_shows/gen/assets.gen.dart';
 import 'package:tv_shows/models/show.dart';
 import 'package:tv_shows/views/show%20screen/provider/shows_provider.dart';
+import 'package:tv_shows/views/user_profile_screen/user_profile_screen.dart';
 
 import 'components/shows_list.dart';
 
@@ -27,6 +30,7 @@ class _Screen extends StatefulWidget {
 
 class _ShowsScreenState extends State<_Screen> {
   bool listVisible = true;
+  //String userImage = StorageRepository.getUser().then((user) => user?.imageUrl).toString();
 
   @override
   Widget build(BuildContext context) {
@@ -34,12 +38,26 @@ class _ShowsScreenState extends State<_Screen> {
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         elevation: 0,
+        actions: [
+          IconButton(
+              icon: /*(userImage.isNotEmpty)
+                  ? Image.network(userImage)
+                  :*/
+                  Image.asset('assets/images/profile_placeholder.png'),
+              onPressed: () => showModalBottomSheet(
+                  isScrollControlled: true,
+                  shape: const RoundedRectangleBorder(borderRadius: BorderRadius.vertical(top: Radius.circular(16.0))),
+                  context: context,
+                  builder: (context) {
+                    return UserProfileScreen(parentContext: this.context);
+                  }))
+        ],
       ),
       body: Consumer<ShowsProvider>(builder: (context, provider, _) {
         return provider.state.maybeWhen(
             success: (shows) => _buildSuccess(context, shows),
             loading: () => CircularProgressIndicator(),
-            failure: (e) => Center(child: Text('An error occured')),
+            failure: (error) => Center(child: Text('$error')),
             orElse: () => Center(child: CircularProgressIndicator()));
       }),
     );

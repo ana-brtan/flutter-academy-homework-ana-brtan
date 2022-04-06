@@ -17,10 +17,13 @@ class WelcomeScreen extends StatefulWidget {
 class _WelcomeScreenState extends State<WelcomeScreen> {
   @override
   void initState() {
-    Future.delayed(Duration(seconds: 1), () {
-      Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => ShowsScreen()));
-    });
     super.initState();
+    Future.delayed(Duration(seconds: 1), () {
+      if (mounted) {
+        Navigator.of(context, rootNavigator: true)
+            .pushReplacement(MaterialPageRoute(builder: (context) => ShowsScreen()));
+      }
+    });
   }
 
   @override

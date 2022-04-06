@@ -31,6 +31,10 @@ class $AssetsImagesGen {
   SvgGenImage get welcomeIcon =>
       const SvgGenImage('assets/images/Welcome-icon.svg');
 
+  /// File path: assets/images/app-icon.png
+  AssetGenImage get appIcon =>
+      const AssetGenImage('assets/images/app-icon.png');
+
   /// File path: assets/images/empty_state.png
   AssetGenImage get emptyState =>
       const AssetGenImage('assets/images/empty_state.png');
@@ -42,6 +46,34 @@ class $AssetsImagesGen {
   /// File path: assets/images/profile_placeholder.png
   AssetGenImage get profilePlaceholder =>
       const AssetGenImage('assets/images/profile_placeholder.png');
+
+  /// File path: assets/images/splash-bottom-left.svg
+  SvgGenImage get splashBottomLeft =>
+      const SvgGenImage('assets/images/splash-bottom-left.svg');
+
+  /// File path: assets/images/splash-bottom-right.svg
+  SvgGenImage get splashBottomRight =>
+      const SvgGenImage('assets/images/splash-bottom-right.svg');
+
+  /// File path: assets/images/splash-icon.svg
+  SvgGenImage get splashIcon =>
+      const SvgGenImage('assets/images/splash-icon.svg');
+
+  /// File path: assets/images/splash-top-left.svg
+  SvgGenImage get splashTopLeft =>
+      const SvgGenImage('assets/images/splash-top-left.svg');
+
+  /// File path: assets/images/splash-top-right.svg
+  SvgGenImage get splashTopRight =>
+      const SvgGenImage('assets/images/splash-top-right.svg');
+
+  /// File path: assets/images/splash_image_enlarge.png
+  AssetGenImage get splashImageEnlarge =>
+      const AssetGenImage('assets/images/splash_image_enlarge.png');
+
+  /// File path: assets/images/splash_image_enlarge2.png
+  AssetGenImage get splashImageEnlarge2 =>
+      const AssetGenImage('assets/images/splash_image_enlarge2.png');
 
   /// File path: assets/images/stranger_things.png
   AssetGenImage get strangerThings =>

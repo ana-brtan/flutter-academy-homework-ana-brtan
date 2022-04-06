@@ -48,6 +48,14 @@ class _WriteReviewsState extends State<_WriteReviews> {
     });
   }
 
+  _onSubmit(WriteReviewProvider provider) {
+    if (rating == 0) {
+      return null;
+    }
+
+    return () => provider.addReview(AddReview(comment, rating, widget.showId)).then((value) => Navigator.pop(context));
+  }
+
   @override
   Widget build(BuildContext context) {
     return Consumer<WriteReviewProvider>(builder: (context, provider, _) {
@@ -111,8 +119,7 @@ class _WriteReviewsState extends State<_WriteReviews> {
                 "Submit",
                 style: TextStyle(fontFamily: 'Roboto', fontSize: 17, color: Colors.white),
               ),
-              onPressed: () =>
-                  provider.addReview(AddReview(comment, rating, widget.showId)).then((value) => Navigator.pop(context)),
+              onPressed: _onSubmit(provider),
             ),
           )
         ]));
