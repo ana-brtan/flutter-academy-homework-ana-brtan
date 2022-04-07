@@ -9,6 +9,7 @@ import 'package:tv_shows/net/auth_info.dart';
 
 class StorageRepository {
   static AuthInfo? _authInfo;
+  static User? user;
   static final _storage = FlutterSecureStorage();
 
   static String keyAccessToken = "access_token";
@@ -46,6 +47,11 @@ class StorageRepository {
     return _authInfo;
   }
 
+  static Future setUid(String newUid) async {
+    await _storage.write(key: keyUid, value: newUid);
+    _authInfo = null;
+  }
+
   static Future<void> storeUser(Map<String, dynamic> json) async {
     final box = await _box;
     await box.put(keyUser, jsonEncode(json));
@@ -56,12 +62,14 @@ class StorageRepository {
     var rawJson = box.get(keyUser);
 
     if (rawJson?.isEmpty ?? true) {
-      return null;
+      throw Exception("user is not set");
     }
 
     Map<String, dynamic> data = json.decode(rawJson!);
 
-    return User.fromJson(data);
+    user = User.fromJson(data);
+
+    return user;
   }
 
   static setAuthInfo(AuthInfo authInfo) async {

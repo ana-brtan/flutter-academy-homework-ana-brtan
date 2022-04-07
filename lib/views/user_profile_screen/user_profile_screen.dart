@@ -1,7 +1,9 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
-import 'package:flutter/rendering.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
+import 'package:tv_shows/models/user.dart';
 import 'package:tv_shows/net/requests/update_email.dart';
 import 'package:tv_shows/views/user_profile_screen/user_profile_provider.dart';
 
@@ -16,7 +18,7 @@ class UserProfileScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ChangeNotifierProvider(
-      create: (context) => UserProfileProvider(context.read(), context.read()),
+      create: (context) => UserProfileProvider(context.read()),
       child: _UserProfile(),
     );
   }
@@ -34,38 +36,69 @@ class _UserProfileState extends State<_UserProfile> {
   XFile? image;
   String imagePath = "";
   String email = "";
+  bool imageEdited = false;
+  bool emailEdited = false;
 
   _onOpenGallery() async {
-    image = await _imagePicker.pickImage(source: ImageSource.gallery);
+    var xImage = await _imagePicker.pickImage(source: ImageSource.gallery);
+    this.imageEdited = xImage?.path != null;
+
+    if (imageEdited) {
+      setState(() {
+        image = xImage;
+      });
+    }
   }
 
-/*    _onSubmit() async {
-      image.path
-    }*/
+  _submitFunc(UserProfileProvider provider) {
+    if (!imageEdited && !emailEdited) {
+      return null;
+    }
+
+    return () {
+      if (image?.path != null) {
+        provider.updateProfilePhoto(image!.path);
+      }
+
+      if (emailEdited) {
+        provider.updateEmail(UpdateEmail(email));
+      }
+    };
+  }
 
   setEmail(String val) {
     setState(() {
       email = val;
+      this.emailEdited = true;
     });
   }
 
-  _onUpdate(UserProfileProvider provider, email) {
-    provider.updateEmail(UpdateEmail(email));
-    //provider.updateProfilePhoto(UpdateProfilePhoto(imagePath));
+  Image _userImage(String? remoteURL) {
+    if (image?.path != null) {
+      return Image.file(new File(image!.path));
+    }
+
+    if (remoteURL != null) {
+      return Image.network(remoteURL);
+    }
+
+    return Image.asset(
+      'assets/images/profile_placeholder.png',
+    );
   }
 
   @override
   Widget build(BuildContext context) {
     return Consumer<UserProfileProvider>(builder: (context, provider, _) {
       return provider.state.maybeWhen(
-          success: (_) => _buildSuccess(context, provider),
+          success: (user) => _buildSuccess(context, provider, user!),
           loading: () => Center(child: CircularProgressIndicator()),
           failure: (e) => Center(child: Text('An error occurred')),
-          orElse: () => _buildSuccess(context, provider));
+          orElse: () => Text("User not found"));
     });
   }
 
-  Widget _buildSuccess(BuildContext context, UserProfileProvider provider) {
+  Widget _buildSuccess(BuildContext context, UserProfileProvider provider, User user) {
     return Container(
       child: Padding(
         padding: EdgeInsets.symmetric(horizontal: 25, vertical: 50),
@@ -77,15 +110,12 @@ class _UserProfileState extends State<_UserProfile> {
             SizedBox(
               height: 300,
               width: 300,
-              child: IconButton(
-                  icon: Image.asset(
-                    'assets/images/profile_placeholder.png',
-                  ),
-                  onPressed: _onOpenGallery),
+              child: IconButton(icon: _userImage(user.imageUrl), onPressed: _onOpenGallery),
             ),
             Padding(
               padding: EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom),
-              child: TextField(
+              child: TextFormField(
+                  initialValue: user.email,
                   onChanged: setEmail,
                   decoration: InputDecoration(
                       enabledBorder: OutlineInputBorder(
@@ -104,7 +134,7 @@ class _UserProfileState extends State<_UserProfile> {
                   minWidth: double.infinity,
                   height: 45,
                   child: Text('Update'),
-                  onPressed: () => _onUpdate(provider, email)),
+                  onPressed: _submitFunc(provider)),
             ),
             MaterialButton(
                 shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(22.5)),

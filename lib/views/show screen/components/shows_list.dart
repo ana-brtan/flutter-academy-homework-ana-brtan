@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 import 'package:tv_shows/models/show.dart';
 import 'package:tv_shows/views/show_details_screen/show_details_screen.dart';
 
@@ -29,7 +28,10 @@ class ShowsList extends StatelessWidget {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           (shows[index].imageUrl != null)
-                              ? Image.network(shows[index].imageUrl!, height: 193, width: 344, fit: BoxFit.cover)
+                              ? Hero(
+                                  tag: shows[index].imageUrl.toString(),
+                                  child:
+                                      Image.network(shows[index].imageUrl!, height: 193, width: 344, fit: BoxFit.cover))
                               : Container(height: 193, width: 344),
                           Padding(
                             padding: const EdgeInsets.all(16),

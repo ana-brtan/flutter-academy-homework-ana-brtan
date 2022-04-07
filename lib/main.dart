@@ -3,5 +3,6 @@ import 'package:tv_shows/app.dart';
 import 'package:tv_shows/net/storage_repository.dart';
 
 void main() async {
-  await StorageRepository.initialize().then((value) => runApp(const TVShowsApp()));
+  await StorageRepository.initialize();
+  runApp(const TVShowsApp());
 }

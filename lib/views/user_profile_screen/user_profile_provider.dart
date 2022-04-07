@@ -5,11 +5,12 @@ import 'package:tv_shows/net/storage_repository.dart';
 
 import '../../common/request_provider.dart';
 
-class UserProfileProvider extends RequestProvider<User> {
+class UserProfileProvider extends RequestProvider<User?> {
   final NetworkRepository _networkRepository;
-  final StorageRepository _storageRepository;
 
-  UserProfileProvider(this._networkRepository, this._storageRepository);
+  UserProfileProvider(this._networkRepository) {
+    getUser();
+  }
 
   void updateProfilePhoto(String imagePath) {
     executeRequest(requestBuilder: () => _networkRepository.updateProfilePhoto(imagePath));
@@ -17,5 +18,9 @@ class UserProfileProvider extends RequestProvider<User> {
 
   void updateEmail(UpdateEmail body) {
     executeRequest(requestBuilder: () => _networkRepository.updateEmail(body));
+  }
+
+  void getUser() {
+    executeRequest(requestBuilder: () => StorageRepository.getUser());
   }
 }

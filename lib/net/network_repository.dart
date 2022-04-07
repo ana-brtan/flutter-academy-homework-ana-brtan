@@ -37,11 +37,16 @@ class NetworkRepository {
   }
 
   Future<User> signInUser(SignInInfo info) async {
-    final response = await _dio.post("/users/sign_in", data: info.toJson());
-    var userJson = response.data['user'];
-    await StorageRepository.storeUser(userJson);
-    await StorageRepository.setAuthInfo(AuthInfo.fromHeaderMap(response.headers.map));
-    return User.fromJson(userJson);
+    try {
+      var data = info.toJson();
+      final response = await _dio.post("/users/sign_in", data: data);
+      var userJson = response.data['user'];
+      await StorageRepository.storeUser(userJson);
+      await StorageRepository.setAuthInfo(AuthInfo.fromHeaderMap(response.headers.map));
+      return User.fromJson(userJson);
+    } catch (ex) {
+      throw Exception(ex);
+    }
   }
 
   Future<List<Show>> fetchShows() async {
@@ -66,6 +71,7 @@ class NetworkRepository {
     final response = await _dio.put("/users", data: body.ToJson());
     var userJson = response.data['user'];
     await StorageRepository.storeUser(userJson);
+    await StorageRepository.setAuthInfo(AuthInfo.fromHeaderMap(response.headers.map));
     return User.fromJson(userJson);
   }
 

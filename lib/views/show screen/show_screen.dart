@@ -7,6 +7,7 @@ import 'package:tv_shows/models/show.dart';
 import 'package:tv_shows/views/show%20screen/provider/shows_provider.dart';
 import 'package:tv_shows/views/user_profile_screen/user_profile_screen.dart';
 
+import '../../net/storage_repository.dart';
 import 'components/shows_list.dart';
 
 class ShowsScreen extends StatelessWidget {
@@ -30,27 +31,31 @@ class _Screen extends StatefulWidget {
 
 class _ShowsScreenState extends State<_Screen> {
   bool listVisible = true;
-  //String userImage = StorageRepository.getUser().then((user) => user?.imageUrl).toString();
 
   @override
   Widget build(BuildContext context) {
+    context.watch<StorageRepository>();
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         elevation: 0,
         actions: [
-          IconButton(
-              icon: /*(userImage.isNotEmpty)
-                  ? Image.network(userImage)
-                  :*/
-                  Image.asset('assets/images/profile_placeholder.png'),
-              onPressed: () => showModalBottomSheet(
-                  isScrollControlled: true,
-                  shape: const RoundedRectangleBorder(borderRadius: BorderRadius.vertical(top: Radius.circular(16.0))),
-                  context: context,
-                  builder: (context) {
-                    return UserProfileScreen(parentContext: this.context);
-                  }))
+          CircleAvatar(
+            child: IconButton(
+                icon: StorageRepository.user?.imageUrl != null
+                    ? ClipOval(
+                        child: Image.network(StorageRepository.user!.imageUrl!),
+                      )
+                    : Image.asset('assets/images/profile_placeholder.png'),
+                onPressed: () => showModalBottomSheet(
+                    isScrollControlled: true,
+                    shape:
+                        const RoundedRectangleBorder(borderRadius: BorderRadius.vertical(top: Radius.circular(16.0))),
+                    context: context,
+                    builder: (context) {
+                      return UserProfileScreen(parentContext: this.context);
+                    })),
+          )
         ],
       ),
       body: Consumer<ShowsProvider>(builder: (context, provider, _) {
