@@ -1,7 +1,9 @@
 import 'dart:io';
 
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:lottie/lottie.dart';
 import 'package:provider/provider.dart';
 import 'package:tv_shows/models/user.dart';
 import 'package:tv_shows/net/requests/update_email.dart';
@@ -31,13 +33,34 @@ class _UserProfile extends StatefulWidget {
   State<_UserProfile> createState() => _UserProfileState();
 }
 
-class _UserProfileState extends State<_UserProfile> {
+class _UserProfileState extends State<_UserProfile> with TickerProviderStateMixin {
   final ImagePicker _imagePicker = ImagePicker();
   XFile? image;
   String imagePath = "";
   String email = "";
   bool imageEdited = false;
   bool emailEdited = false;
+  bool isBeingUpdated = false;
+  late AnimationController rotateAnimationController;
+  late AnimationController scaleAnimationController;
+  late Animation<double> animation;
+
+  @override
+  void initState() {
+    super.initState();
+    rotateAnimationController = AnimationController(vsync: this, duration: Duration(milliseconds: 1000));
+    scaleAnimationController = AnimationController(vsync: this, duration: Duration(milliseconds: 1000));
+    // scaleAnimationController.
+    // scaleAnimationController.forward();
+    // rotateAnimationController.forward();
+    animation = CurvedAnimation(parent: scaleAnimationController, curve: Curves.elasticOut);
+  }
+
+  @override
+  void dispose() {
+    rotateAnimationController.dispose();
+    scaleAnimationController.dispose();
+  }
 
   _onOpenGallery() async {
     var xImage = await _imagePicker.pickImage(source: ImageSource.gallery);
@@ -47,6 +70,7 @@ class _UserProfileState extends State<_UserProfile> {
       setState(() {
         image = xImage;
       });
+      rotateAnimationController.forward();
     }
   }
 
@@ -54,10 +78,14 @@ class _UserProfileState extends State<_UserProfile> {
     if (!imageEdited && !emailEdited) {
       return null;
     }
-
     return () {
       if (image?.path != null) {
         provider.updateProfilePhoto(image!.path);
+        setState(() {
+          isBeingUpdated = true;
+        });
+
+        Future.delayed(Duration(seconds: 1), () => scaleAnimationController.forward());
       }
 
       if (emailEdited) {
@@ -87,12 +115,33 @@ class _UserProfileState extends State<_UserProfile> {
     );
   }
 
+  _animatedProfilePhoto(User user) {
+    var baseWidget = IconButton(
+        iconSize: 95,
+        icon: StorageRepository.user?.imageUrl != null
+            ? _userImage(user.imageUrl)
+            : Image.asset(('assets/images/profile_placeholder.png')),
+        onPressed: _onOpenGallery);
+
+    if (!isBeingUpdated) {
+      return RotationTransition(
+          turns: Tween(begin: 0.0, end: 1.0).animate(rotateAnimationController), child: baseWidget);
+    } else {
+      return ScaleTransition(
+        scale: animation,
+        child: baseWidget,
+      );
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Consumer<UserProfileProvider>(builder: (context, provider, _) {
       return provider.state.maybeWhen(
-          success: (user) => _buildSuccess(context, provider, user!),
-          loading: () => Center(child: CircularProgressIndicator()),
+          success: (user) {
+            return _buildSuccess(context, provider, user!);
+          },
+          loading: () => Center(child: Lottie.asset('assets/images/loading_simple.json')),
           failure: (e) => Center(child: Text('An error occurred')),
           orElse: () => Text("User not found"));
     });
@@ -107,10 +156,13 @@ class _UserProfileState extends State<_UserProfile> {
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            SizedBox(
-              height: 300,
-              width: 300,
-              child: IconButton(icon: _userImage(user.imageUrl), onPressed: _onOpenGallery),
+            Padding(
+              padding: EdgeInsets.only(bottom: 40),
+              child: CircleAvatar(
+                  minRadius: 60,
+                  maxRadius: 60,
+                  backgroundColor: Colors.transparent,
+                  child: _animatedProfilePhoto(user)),
             ),
             Padding(
               padding: EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom),
@@ -134,7 +186,11 @@ class _UserProfileState extends State<_UserProfile> {
                   minWidth: double.infinity,
                   height: 45,
                   child: Text('Update'),
-                  onPressed: _submitFunc(provider)),
+                  onPressed: () async {
+                    await _submitFunc(provider);
+                    await Future.delayed(Duration(milliseconds: 500));
+                    Navigator.pop(context);
+                  }),
             ),
             MaterialButton(
                 shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(22.5)),

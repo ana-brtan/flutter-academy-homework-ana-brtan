@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:lottie/lottie.dart';
 import 'package:provider/provider.dart';
 import 'package:tv_shows/models/user.dart';
 import 'package:tv_shows/net/requests/sign_in_info.dart';
@@ -53,7 +54,9 @@ class _Screen extends StatelessWidget {
           failure: (_) => showDialog(
             context: context,
             builder: (context) => AlertDialog(
-              content: Text('An error occured'),
+              content: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [Lottie.asset('assets/images/error.json'), Text('Wrong username or password.')]),
             ),
           ),
         );

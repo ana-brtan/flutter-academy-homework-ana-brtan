@@ -39,9 +39,24 @@ class $AssetsImagesGen {
   AssetGenImage get emptyState =>
       const AssetGenImage('assets/images/empty_state.png');
 
+  /// File path: assets/images/error.json
+  String get error => 'assets/images/error.json';
+
   /// File path: assets/images/krv_nije_voda.png
   AssetGenImage get krvNijeVoda =>
       const AssetGenImage('assets/images/krv_nije_voda.png');
+
+  /// File path: assets/images/loading.json
+  String get loading => 'assets/images/loading.json';
+
+  /// File path: assets/images/loading_simple.json
+  String get loadingSimple => 'assets/images/loading_simple.json';
+
+  /// File path: assets/images/movie.json
+  String get movie => 'assets/images/movie.json';
+
+  /// File path: assets/images/movie2.json
+  String get movie2 => 'assets/images/movie2.json';
 
   /// File path: assets/images/profile_placeholder.png
   AssetGenImage get profilePlaceholder =>
@@ -90,6 +105,9 @@ class $AssetsImagesGen {
   /// File path: assets/images/the_office_3x.png
   AssetGenImage get theOffice3x =>
       const AssetGenImage('assets/images/the_office_3x.png');
+
+  /// File path: assets/images/waiting.json
+  String get waiting => 'assets/images/waiting.json';
 }
 
 class Assets {
