@@ -23,4 +23,23 @@ class UserProfileProvider extends RequestProvider<User?> {
   void getUser() {
     executeRequest(requestBuilder: () => StorageRepository.getUser());
   }
+
+  void updateUserProfile(String? imagePath, UpdateEmail? body) async {
+    List<Future<User>> requestQueue = [];
+
+    if (body?.email != "") {
+      requestQueue.add(_networkRepository.updateEmail(body!));
+    }
+
+    if (imagePath != null) {
+      requestQueue.add(_networkRepository.updateProfilePhoto(imagePath));
+    }
+
+    try {
+      var response = await Future.wait(requestQueue);
+      executeRequest(requestBuilder: () => StorageRepository.getUser());
+    } catch (err) {
+      throw Exception('error');
+    }
+  }
 }

@@ -44,22 +44,24 @@ class _UserProfileState extends State<_UserProfile> with TickerProviderStateMixi
   late AnimationController rotateAnimationController;
   late AnimationController scaleAnimationController;
   late Animation<double> animation;
+  User? user;
 
   @override
   void initState() {
     super.initState();
-    rotateAnimationController = AnimationController(vsync: this, duration: Duration(milliseconds: 1000));
-    scaleAnimationController = AnimationController(vsync: this, duration: Duration(milliseconds: 1000));
-    // scaleAnimationController.
-    // scaleAnimationController.forward();
-    // rotateAnimationController.forward();
-    animation = CurvedAnimation(parent: scaleAnimationController, curve: Curves.elasticOut);
+    rotateAnimationController = AnimationController(vsync: this, duration: Duration(seconds: 1));
+    scaleAnimationController = AnimationController(vsync: this, duration: Duration(seconds: 1));
+    animation = CurvedAnimation(parent: scaleAnimationController, curve: Curves.elasticOut)
+      ..addStatusListener((AnimationStatus status) {
+        if (status == AnimationStatus.completed) Navigator.pop(context);
+      });
   }
 
   @override
   void dispose() {
     rotateAnimationController.dispose();
     scaleAnimationController.dispose();
+    super.dispose();
   }
 
   _onOpenGallery() async {
@@ -70,28 +72,14 @@ class _UserProfileState extends State<_UserProfile> with TickerProviderStateMixi
       setState(() {
         image = xImage;
       });
+
       rotateAnimationController.forward();
     }
   }
 
-  _submitFunc(UserProfileProvider provider) {
-    if (!imageEdited && !emailEdited) {
-      return null;
-    }
-    return () {
-      if (image?.path != null) {
-        provider.updateProfilePhoto(image!.path);
-        setState(() {
-          isBeingUpdated = true;
-        });
-
-        Future.delayed(Duration(seconds: 1), () => scaleAnimationController.forward());
-      }
-
-      if (emailEdited) {
-        provider.updateEmail(UpdateEmail(email));
-      }
-    };
+  _onSubmit(UserProfileProvider provider) {
+    isBeingUpdated = true;
+    provider.updateUserProfile(image?.path, UpdateEmail(email));
   }
 
   setEmail(String val) {
@@ -106,22 +94,26 @@ class _UserProfileState extends State<_UserProfile> with TickerProviderStateMixi
       return Image.file(new File(image!.path));
     }
 
-    if (remoteURL != null) {
-      return Image.network(remoteURL);
-    }
-
-    return Image.asset(
+    var fallbackImage = Image.asset(
       'assets/images/profile_placeholder.png',
     );
+
+    if (remoteURL != null) {
+      return Image.network(
+        remoteURL,
+        errorBuilder: (_ctx, _exception, _) {
+          return Text("Error loading image");
+        },
+        height: 100,
+        width: 100,
+      );
+    }
+
+    return fallbackImage;
   }
 
-  _animatedProfilePhoto(User user) {
-    var baseWidget = IconButton(
-        iconSize: 95,
-        icon: StorageRepository.user?.imageUrl != null
-            ? _userImage(user.imageUrl)
-            : Image.asset(('assets/images/profile_placeholder.png')),
-        onPressed: _onOpenGallery);
+  Widget _animatedProfilePhoto(User user) {
+    var baseWidget = IconButton(iconSize: 95, icon: _userImage(user.imageUrl), onPressed: _onOpenGallery);
 
     if (!isBeingUpdated) {
       return RotationTransition(
@@ -141,13 +133,20 @@ class _UserProfileState extends State<_UserProfile> with TickerProviderStateMixi
           success: (user) {
             return _buildSuccess(context, provider, user!);
           },
-          loading: () => Center(child: Lottie.asset('assets/images/loading_simple.json')),
+          loading: () => Center(child: Lottie.asset('assets/images/loading_simple.json', width: 150, height: 150)),
           failure: (e) => Center(child: Text('An error occurred')),
           orElse: () => Text("User not found"));
     });
   }
 
   Widget _buildSuccess(BuildContext context, UserProfileProvider provider, User user) {
+    if (this.user != null) {
+      if (this.user!.imageUrl != user.imageUrl) {
+        scaleAnimationController.forward();
+      }
+    }
+
+    this.user = user;
     return Container(
       child: Padding(
         padding: EdgeInsets.symmetric(horizontal: 25, vertical: 50),
@@ -186,10 +185,10 @@ class _UserProfileState extends State<_UserProfile> with TickerProviderStateMixi
                   minWidth: double.infinity,
                   height: 45,
                   child: Text('Update'),
-                  onPressed: () async {
-                    await _submitFunc(provider);
-                    await Future.delayed(Duration(milliseconds: 500));
-                    Navigator.pop(context);
+                  onPressed: () {
+                    _onSubmit(provider);
+                    // await Future.delayed(Duration(milliseconds: 500));
+                    // Navigator.pop(context);
                   }),
             ),
             MaterialButton(
