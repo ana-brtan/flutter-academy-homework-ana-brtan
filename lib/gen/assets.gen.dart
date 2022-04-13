@@ -42,6 +42,9 @@ class $AssetsImagesGen {
   /// File path: assets/images/error.json
   String get error => 'assets/images/error.json';
 
+  /// File path: assets/images/hidden.json
+  String get hidden => 'assets/images/hidden.json';
+
   /// File path: assets/images/krv_nije_voda.png
   AssetGenImage get krvNijeVoda =>
       const AssetGenImage('assets/images/krv_nije_voda.png');

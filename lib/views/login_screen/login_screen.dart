@@ -64,6 +64,7 @@ class _Screen extends StatelessWidget {
       builder: (context, provider) {
         return provider.state.maybeWhen(
           orElse: () => BaseLoginScreen(
+            key: Key('baseLoginScreen'),
             isLoginMode: true,
             isLoading: false,
             buttonPressed: (email, password) {
@@ -75,6 +76,7 @@ class _Screen extends StatelessWidget {
             showOtherButtonTitle: showOtherButtonTitle,
           ),
           loading: () => BaseLoginScreen(
+            key: Key('baseLoginScreen'),
             isLoading: true,
             isLoginMode: true,
             buttonPressed: (email, password) {

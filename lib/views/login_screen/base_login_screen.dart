@@ -35,6 +35,7 @@ class BaseLoginScreen extends StatelessWidget {
           Container(height: 10),
           Center(
             child: LoginForm(
+                key: Key('loginForm'),
                 title: title,
                 description: description,
                 showOtherButtonPressed: showOtherButtonPressed,

@@ -81,6 +81,7 @@ class _LoginFormState extends State<LoginForm> {
         Container(
           margin: const EdgeInsets.only(top: 36),
           child: TextField(
+            key: Key('emailInput'),
             onChanged: setEmail,
             style: const TextStyle(color: Colors.white, fontSize: 16),
             decoration: InputDecoration(
@@ -95,6 +96,7 @@ class _LoginFormState extends State<LoginForm> {
         Container(
           margin: const EdgeInsets.only(top: 25, bottom: 0),
           child: TextField(
+            key: Key('passwordInput'),
             onChanged: setPassword,
             style: const TextStyle(color: Colors.white, fontSize: 16),
             obscureText: !_isHidden,
@@ -124,6 +126,7 @@ class _LoginFormState extends State<LoginForm> {
           child: widget.isLoading
               ? Center(child: CircularProgressIndicator())
               : MaterialButton(
+                  key: Key('submitButton'),
                   shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(22.5)),
                   height: 45,
                   minWidth: double.infinity,

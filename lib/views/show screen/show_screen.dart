@@ -79,6 +79,7 @@ class _ShowsScreenState extends State<_Screen> {
           children: [
             _header(),
             Visibility(
+              key: Key("visibility"),
               visible: listVisible,
               replacement: Container(
                 height: MediaQuery.of(context).size.height * 0.7,
