@@ -125,23 +125,41 @@ class _LoginFormState extends State<LoginForm> {
           margin: const EdgeInsets.only(top: 60),
           child: widget.isLoading
               ? Center(child: CircularProgressIndicator())
-              : MaterialButton(
-                  key: Key('submitButton'),
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(22.5)),
-                  height: 45,
-                  minWidth: double.infinity,
-                  color: Colors.white,
-                  disabledColor: const Color(0xffbbbbbbb).withOpacity(0.5),
-                  child: Text(
-                    widget.buttonTitle,
-                    style: TextStyle(
-                        fontFamily: 'Roboto',
-                        fontSize: 17,
-                        color: isFormValid ? const Color(0xff3d1d72) : Colors.white),
-                  ),
-                  onPressed: isFormValid ? () => widget.buttonPressed(email, password) : null),
+              : LoginFormButton(widget: widget, isFormValid: isFormValid, email: email, password: password),
         ),
       ]),
     );
+  }
+}
+
+class LoginFormButton extends StatelessWidget {
+  const LoginFormButton({
+    Key? key,
+    required this.widget,
+    required this.isFormValid,
+    required this.email,
+    required this.password,
+  }) : super(key: key);
+
+  final LoginForm widget;
+  final bool isFormValid;
+  final String email;
+  final String password;
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialButton(
+        key: Key('submitButton'),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(22.5)),
+        height: 45,
+        minWidth: double.infinity,
+        color: Colors.white,
+        disabledColor: const Color(0xffbbbbbbb).withOpacity(0.5),
+        child: Text(
+          widget.buttonTitle,
+          style: TextStyle(
+              fontFamily: 'Roboto', fontSize: 17, color: isFormValid ? const Color(0xff3d1d72) : Colors.white),
+        ),
+        onPressed: isFormValid ? () => widget.buttonPressed(email, password) : null);
   }
 }

@@ -191,25 +191,36 @@ class _UserProfileState extends State<_UserProfile> with TickerProviderStateMixi
                     // Navigator.pop(context);
                   }),
             ),
-            MaterialButton(
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(22.5)),
-                height: 45,
-                minWidth: double.infinity,
-                color: const Color(0xff3d1d72),
-                child: Text(
-                  'Logout',
-                  style: TextStyle(fontFamily: 'Roboto', fontSize: 17, color: Colors.white),
-                ),
-                onPressed: () async {
-                  await StorageRepository.flushAuthInfo();
-                  await StorageRepository.flushUser();
-                  Navigator.pushAndRemoveUntil(
-                      context, MaterialPageRoute(builder: (context) => LoginScreen()), (Route<dynamic> route) => false);
-                })
+            LogoutButton()
           ],
           // children: [Image.asset('assets/images/ n')],
         ),
       ),
     );
+  }
+}
+
+class LogoutButton extends StatelessWidget {
+  const LogoutButton({
+    Key? key,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialButton(
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(22.5)),
+        height: 45,
+        minWidth: double.infinity,
+        color: const Color(0xff3d1d72),
+        child: Text(
+          'Logout',
+          style: TextStyle(fontFamily: 'Roboto', fontSize: 17, color: Colors.white),
+        ),
+        onPressed: () async {
+          await StorageRepository.flushAuthInfo();
+          await StorageRepository.flushUser();
+          Navigator.pushAndRemoveUntil(
+              context, MaterialPageRoute(builder: (context) => LoginScreen()), (Route<dynamic> route) => false);
+        });
   }
 }
