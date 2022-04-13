@@ -3,7 +3,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
-import 'package:tv_shows/gen/assets.gen.dart';
+import 'package:lottie/lottie.dart';
 import 'package:tv_shows/views/show%20screen/show_screen.dart';
 
 class WelcomeScreen extends StatefulWidget {
@@ -34,7 +34,7 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
         mainAxisAlignment: MainAxisAlignment.center,
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          Assets.images.welcomeIcon.svg(),
+          SizedBox(width: 100, height: 100, child: Lottie.asset('assets/images/movie2.json')),
           Padding(padding: EdgeInsets.fromLTRB(0, 0, 0, 30)),
           Text(
             'Welcome, ' + widget.email + '!',
