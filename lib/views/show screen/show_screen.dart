@@ -1,9 +1,13 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
+import 'package:lottie/lottie.dart';
 import 'package:provider/provider.dart';
-import 'package:tv_shows/gen/assets.gen.dart';
 import 'package:tv_shows/models/show.dart';
 import 'package:tv_shows/views/show%20screen/provider/shows_provider.dart';
+import 'package:tv_shows/views/user_profile_screen/user_profile_screen.dart';
 
+import '../../net/storage_repository.dart';
 import 'components/shows_list.dart';
 
 class ShowsScreen extends StatelessWidget {
@@ -30,16 +34,37 @@ class _ShowsScreenState extends State<_Screen> {
 
   @override
   Widget build(BuildContext context) {
+    context.watch<StorageRepository>();
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         elevation: 0,
+        actions: [
+          CircleAvatar(
+            child: IconButton(
+                icon: StorageRepository.user?.imageUrl != null
+                    ? ClipOval(
+                        child: Image.network(StorageRepository.user!.imageUrl!),
+                      )
+                    : Image.asset('assets/images/profile_placeholder.png'),
+                onPressed: () => showModalBottomSheet(
+                    isScrollControlled: true,
+                    shape:
+                        const RoundedRectangleBorder(borderRadius: BorderRadius.vertical(top: Radius.circular(16.0))),
+                    context: context,
+                    builder: (context) {
+                      return UserProfileScreen(parentContext: this.context);
+                    })),
+          )
+        ],
       ),
       body: Consumer<ShowsProvider>(builder: (context, provider, _) {
         return provider.state.maybeWhen(
             success: (shows) => _buildSuccess(context, shows),
-            loading: () => CircularProgressIndicator(),
-            failure: (e) => Center(child: Text('An error occured')),
+            loading: () => Center(
+                  child: SizedBox(width: 100, height: 100, child: Lottie.asset('assets/images/loading_simple.json')),
+                ),
+            failure: (error) => Center(child: Text('$error')),
             orElse: () => Center(child: CircularProgressIndicator()));
       }),
     );
@@ -62,7 +87,11 @@ class _ShowsScreenState extends State<_Screen> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
-                    Assets.images.emptyState.image(),
+                    SizedBox(
+                      width: 130,
+                      height: 130,
+                      child: Lottie.asset('assets/images/hidden.json'),
+                    ),
                     const Padding(
                       padding: EdgeInsets.all(26),
                       child: Text('Your shows are not showing. Get it?',

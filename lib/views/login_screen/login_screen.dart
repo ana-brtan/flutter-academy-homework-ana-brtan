@@ -1,7 +1,10 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:lottie/lottie.dart';
 import 'package:provider/provider.dart';
+import 'package:tv_shows/models/user.dart';
 import 'package:tv_shows/net/requests/sign_in_info.dart';
+import 'package:tv_shows/net/storage_repository.dart';
 import 'package:tv_shows/providers/login_provider.dart';
 import 'package:tv_shows/views/login_screen/base_login_screen.dart';
 import 'package:tv_shows/views/login_screen/register_screen.dart';
@@ -36,15 +39,24 @@ class _Screen extends StatelessWidget {
       Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => const RegisterScreen()));
     }
 
+    _navigateToWelcomeScreen(User user) {
+      Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => WelcomeScreen(email: user.email)));
+    }
+
+    Future.wait([StorageRepository.getUser(), StorageRepository.getAuthInfo()]).then((value) => {
+          if (value[0] != null && value[1] != null) {_navigateToWelcomeScreen(value[0] as User)}
+        });
+
     return ConsumerListener<LoginProvider>(
       listener: (context, provider) {
         provider.state.whenOrNull(
-          success: (user) => Navigator.pushReplacement(
-              context, MaterialPageRoute(builder: (context) => WelcomeScreen(email: user.email))),
+          success: (user) => _navigateToWelcomeScreen(user),
           failure: (_) => showDialog(
             context: context,
             builder: (context) => AlertDialog(
-              content: Text('An error occured'),
+              content: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [Lottie.asset('assets/images/error.json'), Text('Wrong username or password.')]),
             ),
           ),
         );

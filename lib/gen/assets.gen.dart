@@ -31,17 +31,64 @@ class $AssetsImagesGen {
   SvgGenImage get welcomeIcon =>
       const SvgGenImage('assets/images/Welcome-icon.svg');
 
+  /// File path: assets/images/app-icon.png
+  AssetGenImage get appIcon =>
+      const AssetGenImage('assets/images/app-icon.png');
+
   /// File path: assets/images/empty_state.png
   AssetGenImage get emptyState =>
       const AssetGenImage('assets/images/empty_state.png');
+
+  /// File path: assets/images/error.json
+  String get error => 'assets/images/error.json';
 
   /// File path: assets/images/krv_nije_voda.png
   AssetGenImage get krvNijeVoda =>
       const AssetGenImage('assets/images/krv_nije_voda.png');
 
+  /// File path: assets/images/loading.json
+  String get loading => 'assets/images/loading.json';
+
+  /// File path: assets/images/loading_simple.json
+  String get loadingSimple => 'assets/images/loading_simple.json';
+
+  /// File path: assets/images/movie.json
+  String get movie => 'assets/images/movie.json';
+
+  /// File path: assets/images/movie2.json
+  String get movie2 => 'assets/images/movie2.json';
+
   /// File path: assets/images/profile_placeholder.png
   AssetGenImage get profilePlaceholder =>
       const AssetGenImage('assets/images/profile_placeholder.png');
+
+  /// File path: assets/images/splash-bottom-left.svg
+  SvgGenImage get splashBottomLeft =>
+      const SvgGenImage('assets/images/splash-bottom-left.svg');
+
+  /// File path: assets/images/splash-bottom-right.svg
+  SvgGenImage get splashBottomRight =>
+      const SvgGenImage('assets/images/splash-bottom-right.svg');
+
+  /// File path: assets/images/splash-icon.svg
+  SvgGenImage get splashIcon =>
+      const SvgGenImage('assets/images/splash-icon.svg');
+
+  /// File path: assets/images/splash-top-left.svg
+  SvgGenImage get splashTopLeft =>
+      const SvgGenImage('assets/images/splash-top-left.svg');
+
+  /// File path: assets/images/splash-top-right.svg
+  SvgGenImage get splashTopRight =>
+      const SvgGenImage('assets/images/splash-top-right.svg');
+
+  /// File path: assets/images/splash_image_enlarge.png
+  AssetGenImage get splashImageEnlarge =>
+      const AssetGenImage('assets/images/splash_image_enlarge.png');
+
+  /// File path: assets/images/splash_image_enlarge2.png
+  AssetGenImage get splashImageEnlarge2 =>
+      const AssetGenImage('assets/images/splash_image_enlarge2.png');
 
   /// File path: assets/images/stranger_things.png
   AssetGenImage get strangerThings =>
@@ -58,6 +105,9 @@ class $AssetsImagesGen {
   /// File path: assets/images/the_office_3x.png
   AssetGenImage get theOffice3x =>
       const AssetGenImage('assets/images/the_office_3x.png');
+
+  /// File path: assets/images/waiting.json
+  String get waiting => 'assets/images/waiting.json';
 }
 
 class Assets {

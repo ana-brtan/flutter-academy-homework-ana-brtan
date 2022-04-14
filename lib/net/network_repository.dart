@@ -1,21 +1,24 @@
+import 'dart:async';
+
 import 'package:dio/dio.dart';
 import 'package:tv_shows/models/review.dart';
 import 'package:tv_shows/net/auth_info.dart';
-import 'package:tv_shows/net/auth_info_holder.dart';
 import 'package:tv_shows/net/auth_info_interceptor.dart';
 import 'package:tv_shows/net/error_extractor_interceptor.dart';
 import 'package:tv_shows/net/requests/add_review.dart';
 import 'package:tv_shows/net/requests/register_info.dart';
 import 'package:tv_shows/net/requests/sign_in_info.dart';
+import 'package:tv_shows/net/requests/update_email.dart';
+import 'package:tv_shows/net/storage_repository.dart';
 
 import '../models/show.dart';
 import '../models/user.dart';
 
 class NetworkRepository {
-  NetworkRepository(AuthInfoHolder holder) {
+  NetworkRepository(StorageRepository holder) {
     final options = BaseOptions(baseUrl: 'https://tv-shows.infinum.academy');
     _dio = Dio(options);
-    _dio.interceptors.add(AuthInfoInterceptor(authInfoHolder: holder));
+    _dio.interceptors.add(AuthInfoInterceptor());
     _dio.interceptors.add(ErrorExtractorInterceptor());
 
     // this.fetchShows().then((value) => {
@@ -25,28 +28,25 @@ class NetworkRepository {
   }
   late final Dio _dio;
 
-  void _hydrate_token(Headers headers) {
-    var authInterceptor =
-        _dio.interceptors.firstWhere((element) => element is AuthInfoInterceptor) as AuthInfoInterceptor;
-
-    var holder = AuthInfoHolder();
-    holder.authInfo = AuthInfo.fromHeaderMap(headers.map);
-    authInterceptor.authInfoHolder = holder;
-  }
-
   Future<User> registerUser(RegisterInfo info) async {
     final response = await _dio.post("/users", data: info.toJson());
-    _hydrate_token(response.headers);
-
-    return User.fromJson(response.data['user']);
+    var userJson = response.data['user'];
+    await StorageRepository.storeUser(userJson);
+    await StorageRepository.setAuthInfo(AuthInfo.fromHeaderMap(response.headers.map));
+    return User.fromJson(userJson);
   }
 
   Future<User> signInUser(SignInInfo info) async {
-    final response = await _dio.post("/users/sign_in", data: info.toJson());
-
-    _hydrate_token(response.headers);
-
-    return User.fromJson(response.data['user']);
+    try {
+      var data = info.toJson();
+      final response = await _dio.post("/users/sign_in", data: data);
+      var userJson = response.data['user'];
+      await StorageRepository.storeUser(userJson);
+      await StorageRepository.setAuthInfo(AuthInfo.fromHeaderMap(response.headers.map));
+      return User.fromJson(userJson);
+    } catch (ex) {
+      throw Exception(ex);
+    }
   }
 
   Future<List<Show>> fetchShows() async {
@@ -65,5 +65,21 @@ class NetworkRepository {
     final response = await _dio.post("/reviews", data: body.toJson());
     var rawReview = response.data['review'];
     return Review.fromJson(rawReview);
+  }
+
+  Future<User> updateEmail(UpdateEmail body) async {
+    final response = await _dio.put("/users", data: body.ToJson());
+    var userJson = response.data['user'];
+    await StorageRepository.storeUser(userJson);
+    await StorageRepository.setAuthInfo(AuthInfo.fromHeaderMap(response.headers.map));
+    return User.fromJson(userJson);
+  }
+
+  Future<User> updateProfilePhoto(String imagePath) async {
+    var formData = FormData.fromMap({'image': await MultipartFile.fromFile(imagePath)});
+    var response = await _dio.put("/users", data: formData);
+    var userJson = response.data['user'];
+    await StorageRepository.storeUser(userJson);
+    return User.fromJson(userJson);
   }
 }
