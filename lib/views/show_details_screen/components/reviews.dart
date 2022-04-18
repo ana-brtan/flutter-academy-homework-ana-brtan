@@ -77,63 +77,7 @@ class Reviews extends StatelessWidget {
                       var index = element.key;
                       var review = element.value;
 
-                      return Container(
-                        decoration: index > 0
-                            ? BoxDecoration(
-                                border: Border(
-                                top: BorderSide(width: 0.5, color: Color(0xffC8C7CC)),
-                              ))
-                            : null,
-                        child: Padding(
-                          padding: EdgeInsets.symmetric(vertical: 18),
-                          child: Column(
-                            children: [
-                              Row(
-                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                mainAxisSize: MainAxisSize.max,
-                                children: [
-                                  Flexible(
-                                    child: Row(
-                                      children: [
-                                        review.user.imageUrl != null
-                                            ? Image.network(
-                                                review.user.imageUrl!,
-                                                height: 75,
-                                                width: 75,
-                                              )
-                                            : Container(height: 75, width: 75),
-                                        SizedBox(width: 18),
-                                        Text(review.user.email,
-                                            style: TextStyle(
-                                                color: Color(0xff52368C), fontWeight: FontWeight.bold, fontSize: 13),
-                                            overflow: TextOverflow.ellipsis)
-                                      ],
-                                    ),
-                                  ),
-                                  Row(
-                                    children: [
-                                      Text(review.rating.toString(),
-                                          style: TextStyle(
-                                              color: Color(0xff52368C), fontWeight: FontWeight.bold, fontSize: 15)),
-                                      review.rating != null
-                                          ? Icon(
-                                              Icons.star,
-                                              color: Color(0xff52368C),
-                                            )
-                                          : Container(
-                                              width: 100,
-                                              height: 100,
-                                            )
-                                    ],
-                                  )
-                                ],
-                              ),
-                              SizedBox(height: 18),
-                              Row(children: [Text(review.comment, style: TextStyle(fontSize: 15))])
-                            ],
-                          ),
-                        ),
-                      );
+                      return ReviewWidget(index: index, review: review);
                     },
                   ).toList()
                 ],
@@ -142,6 +86,76 @@ class Reviews extends StatelessWidget {
           ),
         )
       ],
+    );
+  }
+}
+
+class ReviewWidget extends StatelessWidget {
+  const ReviewWidget({
+    Key? key,
+    required this.index,
+    required this.review,
+  }) : super(key: key);
+
+  final int index;
+  final Review review;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      decoration: index > 0
+          ? BoxDecoration(
+              border: Border(
+              top: BorderSide(width: 0.5, color: Color(0xffC8C7CC)),
+            ))
+          : null,
+      child: Padding(
+        padding: EdgeInsets.symmetric(vertical: 18),
+        child: Column(
+          children: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              mainAxisSize: MainAxisSize.max,
+              children: [
+                Flexible(
+                  child: Row(
+                    children: [
+                      review.user.imageUrl != null
+                          ? Image.network(
+                              review.user.imageUrl!,
+                              height: 75,
+                              width: 75,
+                            )
+                          : Container(height: 75, width: 75),
+                      SizedBox(width: 18),
+                      Text(review.user.email,
+                          style: TextStyle(color: Color(0xff52368C), fontWeight: FontWeight.bold, fontSize: 13),
+                          overflow: TextOverflow.ellipsis)
+                    ],
+                  ),
+                ),
+                Row(
+                  children: [
+                    Text(review.rating.toString(),
+                        style: TextStyle(color: Color(0xff52368C), fontWeight: FontWeight.bold, fontSize: 15)),
+                    review.rating != null
+                        ? Icon(
+                            Icons.star,
+                            color: Color(0xff52368C),
+                          )
+                        : Container(
+                            width: 100,
+                            height: 100,
+                          )
+                  ],
+                )
+              ],
+            ),
+            SizedBox(height: 18),
+            Row(children: [Text(review.comment, style: TextStyle(fontSize: 15))])
+          ],
+        ),
+      ),
     );
   }
 }

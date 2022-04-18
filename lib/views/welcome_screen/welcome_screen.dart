@@ -34,13 +34,13 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
         mainAxisAlignment: MainAxisAlignment.center,
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          SizedBox(width: 100, height: 100, child: Lottie.asset('assets/images/movie2.json')),
+          SizedBox(key: Key("box"), width: 100, height: 100, child: Lottie.asset('assets/images/movie2.json')),
           Padding(padding: EdgeInsets.fromLTRB(0, 0, 0, 30)),
           Text(
             'Welcome, ' + widget.email + '!',
             style: TextStyle(
                 fontSize: 17, fontFamily: 'Roboto', fontWeight: FontWeight.bold, color: const Color(0xff808080)),
-          )
+          ),
         ],
       ),
     ));
